@@ -4,9 +4,10 @@ import { Download, FileText, PlayCircle } from 'lucide-react';
 import { getLesson } from '@/lib/data';
 import { getUi, type Locale } from '@/lib/i18n';
 
-export default async function LessonPage({ params }: { params: { locale: Locale; slug: string; lessonSlug: string } }) {
-  const lesson = await getLesson(params.locale, params.slug, params.lessonSlug);
-  const t = getUi(params.locale);
+export default async function LessonPage({ params }: { params: Promise<{ locale: Locale; slug: string; lessonSlug: string }> }) {
+  const { locale, slug, lessonSlug } = await params;
+  const lesson = await getLesson(locale, slug, lessonSlug);
+  const t = getUi(locale);
   if (!lesson) notFound();
 
   return (
@@ -52,7 +53,7 @@ export default async function LessonPage({ params }: { params: { locale: Locale;
               After finishing this lesson, redirect the student to the next recommended lesson and update progress.
             </p>
             {lesson.nextLessonSlug ? (
-              <Link href={`/${params.locale}/courses/${lesson.courseSlug}/${lesson.nextLessonSlug}`} className="btn-primary mt-5 w-full">
+              <Link href={`/${locale}/courses/${lesson.courseSlug}/${lesson.nextLessonSlug}`} className="btn-primary mt-5 w-full">
                 {t.continue}
               </Link>
             ) : (

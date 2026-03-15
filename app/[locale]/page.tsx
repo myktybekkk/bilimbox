@@ -4,9 +4,10 @@ import { CourseCard } from '@/components/course-card';
 import { getCourses } from '@/lib/data';
 import { getUi, type Locale } from '@/lib/i18n';
 
-export default async function HomePage({ params }: { params: { locale: Locale } }) {
-  const courses = await getCourses(params.locale);
-  const t = getUi(params.locale);
+export default async function HomePage({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const courses = await getCourses(locale);
+  const t = getUi(locale);
 
   return (
     <main>
@@ -21,10 +22,10 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
               <p className="max-w-xl text-lg leading-8 text-slate-600">{t.heroSubtitle}</p>
             </div>
             <div className="flex flex-wrap gap-4">
-              <Link href={`/${params.locale}/courses`} className="btn-primary">
+              <Link href={`/${locale}/courses`} className="btn-primary">
                 {t.start} <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
-              <Link href={`/${params.locale}/dashboard`} className="btn-secondary">
+              <Link href={`/${locale}/dashboard`} className="btn-secondary">
                 {t.navDashboard}
               </Link>
             </div>
@@ -70,7 +71,7 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
         </div>
         <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
           {courses.map((course) => (
-            <CourseCard key={course.id} locale={params.locale} course={course} />
+            <CourseCard key={course.id} locale={locale} course={course} />
           ))}
         </div>
       </section>

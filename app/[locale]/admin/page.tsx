@@ -1,10 +1,11 @@
 import { getAdminStats, getCourses } from '@/lib/data';
 import { getUi, type Locale } from '@/lib/i18n';
 
-export default async function AdminPage({ params }: { params: { locale: Locale } }) {
+export default async function AdminPage({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
   const stats = await getAdminStats();
-  const courses = await getCourses(params.locale);
-  const t = getUi(params.locale);
+  const courses = await getCourses(locale);
+  const t = getUi(locale);
 
   return (
     <main className="container-shell py-16">

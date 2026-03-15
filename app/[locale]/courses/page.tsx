@@ -2,9 +2,10 @@ import { CourseCard } from '@/components/course-card';
 import { getCourses } from '@/lib/data';
 import { getUi, type Locale } from '@/lib/i18n';
 
-export default async function CoursesPage({ params }: { params: { locale: Locale } }) {
-  const courses = await getCourses(params.locale);
-  const t = getUi(params.locale);
+export default async function CoursesPage({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const courses = await getCourses(locale);
+  const t = getUi(locale);
 
   return (
     <main className="container-shell py-16">
@@ -17,7 +18,7 @@ export default async function CoursesPage({ params }: { params: { locale: Locale
       </div>
       <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
         {courses.map((course) => (
-          <CourseCard key={course.id} locale={params.locale} course={course} />
+          <CourseCard key={course.id} locale={locale} course={course} />
         ))}
       </div>
     </main>

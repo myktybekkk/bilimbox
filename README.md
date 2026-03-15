@@ -18,7 +18,7 @@ A multilingual educational platform (Kyrgyz, Russian, English) built with Next.j
 
 | Layer | Technology |
 |---|---|
-| Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS |
+| Frontend | Next.js 15 (App Router), TypeScript, Tailwind CSS |
 | ORM | Prisma |
 | Database | SQLite (dev) — swap to PostgreSQL for production |
 | Icons | Lucide React |

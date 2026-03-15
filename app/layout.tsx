@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 const LOCALES = ['kg', 'ru', 'en'];
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const h = headers();
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const h = await headers();
   const pathname = h.get('x-pathname') ?? '/kg';
   const locale = LOCALES.find((l) => pathname.startsWith(`/${l}`)) ?? 'kg';
 

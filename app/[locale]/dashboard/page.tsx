@@ -3,9 +3,10 @@ import { ProgressBar } from '@/components/progress-bar';
 import { getDashboard } from '@/lib/data';
 import { getUi, type Locale } from '@/lib/i18n';
 
-export default async function DashboardPage({ params }: { params: { locale: Locale } }) {
-  const dashboard = await getDashboard(params.locale);
-  const t = getUi(params.locale);
+export default async function DashboardPage({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const dashboard = await getDashboard(locale);
+  const t = getUi(locale);
 
   if (!dashboard) {
     return <main className="container-shell py-16">No user found.</main>;
@@ -31,7 +32,7 @@ export default async function DashboardPage({ params }: { params: { locale: Loca
             <div className="mt-4 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">
               Telegram: {course.telegramLabel ?? '@bilimbox'}
             </div>
-            <Link href={`/${params.locale}/courses/${course.slug}`} className="btn-primary mt-5 w-full">Open course</Link>
+            <Link href={`/${locale}/courses/${course.slug}`} className="btn-primary mt-5 w-full">Open course</Link>
           </div>
         ))}
       </div>

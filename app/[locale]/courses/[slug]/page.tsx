@@ -4,9 +4,10 @@ import { BookOpen, CheckCircle2, MessageCircle, PlayCircle } from 'lucide-react'
 import { getCourseBySlug } from '@/lib/data';
 import { getUi, type Locale } from '@/lib/i18n';
 
-export default async function CourseDetailPage({ params }: { params: { locale: Locale; slug: string } }) {
-  const course = await getCourseBySlug(params.locale, params.slug);
-  const t = getUi(params.locale);
+export default async function CourseDetailPage({ params }: { params: Promise<{ locale: Locale; slug: string }> }) {
+  const { locale, slug } = await params;
+  const course = await getCourseBySlug(locale, slug);
+  const t = getUi(locale);
   if (!course) notFound();
 
   return (
@@ -42,7 +43,7 @@ export default async function CourseDetailPage({ params }: { params: { locale: L
                     {module.lessons.map((lesson, lessonIndex) => (
                       <Link
                         key={lesson.id}
-                        href={`/${params.locale}/courses/${course.slug}/${lesson.slug}`}
+                        href={`/${locale}/courses/${course.slug}/${lesson.slug}`}
                         className="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-3 transition hover:border-brand-300 hover:bg-brand-50/40"
                       >
                         <div className="flex items-center gap-3">
