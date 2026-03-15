@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String       @id @default(cuid())
+  email       String       @unique
+  name        String
+  role        String       @default("student")
+  locale      String       @default("kg")
+  enrollments Enrollment[]
+  progresses  Progress[]
+  createdAt   DateTime     @default(now())
+}
+
+model Course {
+  id            String       @id @default(cuid())
+  slug          String       @unique
+  priceKgs      Int
+  level         String
+  cover         String
+  telegramLabel String?
+  translations  CourseI18n[]
+  modules       Module[]
+  enrollments   Enrollment[]
+  createdAt     DateTime     @default(now())
+}
+
+model CourseI18n {
+  id          String @id @default(cuid())
+  locale      String
+  title       String
+  subtitle    String
+  description String
+  outcomes    String
+  courseId    String
+  course      Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, locale])
+}
+
+model Module {
+  id           String       @id @default(cuid())
+  position     Int
+  courseId     String
+  course       Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  translations ModuleI18n[]
+  lessons      Lesson[]
+}
+
+model ModuleI18n {
+  id       String @id @default(cuid())
+  locale   String
+  title    String
+  moduleId String
+  module   Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([moduleId, locale])
+}
+
+model Lesson {
+  id           String       @id @default(cuid())
+  slug         String
+  position     Int
+  durationMin  Int
+  videoUrl     String
+  fileUrl      String?
+  isFree       Boolean      @default(false)
+  moduleId     String
+  module       Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  translations LessonI18n[]
+  progresses   Progress[]
+
+  @@unique([moduleId, slug])
+}
+
+model LessonI18n {
+  id        String @id @default(cuid())
+  locale    String
+  title     String
+  content   String
+  task      String
+  lessonId  String
+  lesson    Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, locale])
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+}
+
+model Progress {
+  id         String   @id @default(cuid())
+  userId      String
+  lessonId    String
+  completed   Boolean  @default(false)
+  completedAt DateTime?
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
